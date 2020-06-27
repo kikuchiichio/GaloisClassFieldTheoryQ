@@ -1,0 +1,99 @@
+/*Define the polynomial f.*/
+f=Pol([1,3,-6,-6,4]);
+/*Compute the splitting field and get the defining polynomial K.*/
+K=nfsplitting(f)
+/*Make Galis extension.*/
+gal=galoisinit(K)
+/* Get subgroups of the Galois group.*/
+subs=galoissubgroups(gal)
+print("Compute properties of the subgroups")
+
+/* List of the fixed fields by the subgroups. */
+v=vector(#subs,i,galoisfixedfield(gal,subs[i],2))
+v2=vector(#subs,i,galoisexport(subs[i]))
+v3=vector(#subs,i,galoisidentify(subs[i]))
+
+/*
+It is a quite natural question:
+How are the roots of the irreducible factors in the subfield? 
+OR,
+How are the four roots of the polynomial 'f' situated in the irreducible factors ?
+
+The check requires a little of algebra, descrived below.
+
+Let us pick up two fields: 
+    v[3] and  the splitting field v[10].
+
+Let Z and W be the irreducible components 
+after the factorizations of 'f' in these two fields.
+
+*/
+
+nums=3;
+Z=nffactor(nfinit(v[nums][1]),f);
+W=nffactor(nfinit(v[10][1]),f);
+Z=Z[,1];
+W=W[,1];
+
+/*
+How is the third subfield?
+*/
+print(v[nums][2]);
+
+/*
+The second component of the output v[3] is 
+ the root <ym> of the defining polynomial of v[3],
+ represented by the root <y> of the polynomial 'K'.
+*/
+ym=subst(lift(v[nums][2]),x,y);
+
+/* 
+ By substitution, we get the representations of 
+ the irreducible factors in the subfield v[3] by <y>
+ which could be factorized in the splitting field Q(y).
+*/
+ 
+ZR=vector(#Z,i, subst(lift(Z[i]),y,ym)*Mod(1,subst(K,x,y)));
+
+/* 
+   The function given below does the factorization in Q(y) explained above 
+   and gives back the corresponding sequential numbers 
+   as the roots of <K> stored in the set 'W'.
+*/
+
+procfactorization()={
+ for(i=1,#ZR,nfs=nfinit(subst(K,x,y));
+ FZR=nffactor(nfs,ZR[i]);print(FZR);
+ FZR=FZR[,1];
+ WIND=vector(#FZR,j,setsearch(Set(W),FZR[j]));
+ print(WIND);)
+}
+
+
+/*
+The following is the function to do the computation as above
+for <num>-th subfield.
+*/ 
+procWIND(WIND)={
+for(i=1,#WIND,if(WIND[i]==3,WIND[i]=5);if(WIND[i]==4,WIND[i]=3));
+for(i=1,#WIND,if(WIND[i]==5,WIND[i]=4));
+print(WIND);
+}
+
+procfactorization2(nums)={
+ Z=nffactor(nfinit(v[nums][1]),f);
+ W=nffactor(nfinit(v[10][1]),f);
+ Z=Z[,1];
+ W=W[,1];
+ print(v[nums][2]);
+ ym=subst(lift(v[nums][2]),x,y);
+ print(ym);
+ ZR=vector(#Z,i, subst(lift(Z[i]),y,ym)*Mod(1,subst(K,x,y)));
+ for(i=1,#ZR,nfs=nfinit(subst(K,x,y));
+  FZR=nffactor(nfs,ZR[i]);print(FZR);
+  FZR=FZR[,1];
+  WIND=vector(#FZR,j,setsearch(Set(W),FZR[j]/polcoeff(FZR[j],poldegree(FZR[j]))));
+  
+  procWIND(WIND);)
+}
+

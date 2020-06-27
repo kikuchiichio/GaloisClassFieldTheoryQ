@@ -1,0 +1,57 @@
+OutputLogTo("galoislatticeout.txt");
+
+#SUBGROUPS OF D4
+
+subs:=[
+Group((1, 6)(2, 4)(3, 8)(5,7), 
+(1, 7, 6, 5)(2, 8, 4, 3), (1, 2)(3, 7)(4, 6)(5, 8)),
+ Group((1, 6)(2, 4)(3, 8)(5, 7), (1, 7, 6, 5)(2, 8, 4, 3)),
+ Group((1, 6)(2, 4)(3, 8)(5, 7), (1, 2)(3, 7)(4, 6)(5, 8)), 
+Group((1, 6)(2, 4)(3, 8)(5, 7), (1, 8)(2, 7)(3, 6)(4, 5)), 
+Group((1, 6)(2, 4)(3, 8)(5, 7)), 
+Group((1, 2)(3, 7)(4, 6)(5, 8)), 
+Group((1, 4)(2, 6)(3, 5)(7, 8)), 
+Group((1, 8)(2, 7)(3, 6)(4, 5)), 
+Group((1, 3)(2, 5)(4, 7)(6, 8)), 
+Group(())
+];
+inc:=List(subs,i->List(subs,j->IsSubgroup(i,j)));
+for i in [1..10] do
+for j in [1..10] do
+if inc[i][j]=true then
+Print(i);Print("-");Print(j);Print(IsNormal(subs[i],subs[j]));Print("\n");
+fi;
+od;
+od;
+
+#CHECK OF CONGUGACY
+IsConjugate(subs[1],subs[6],subs[7]);
+IsConjugate(subs[1],subs[8],subs[9]);
+
+
+D4:=DihedralGroup(8);
+IsomorphismGroups(D4,subs[1]);
+
+
+g0:=Group(MinimalGeneratingSet(subs[1]));
+hom:=EpimorphismFromFreeGroup(g0:names:=["a","b"]);
+for i in [1..10] do
+mingens:=MinimalGeneratingSet(subs[i]);
+Print("NO");Print(i);Print(mingens);Print("\n");
+for gen in mingens do
+preim:=PreImagesRepresentative(hom,gen);
+Print(preim);Print("->");Print(gen);Print("\n");
+od;
+od;
+
+for i in [1..10] do
+mingens:=MinimalGeneratingSet(subs[i]);
+Print("NO");Print(i);
+genlist:=List(mingens,gen->PreImagesRepresentative(hom,gen));
+Print(mingens);Print(genlist);
+Print("\n");
+od;
+
+
+
+

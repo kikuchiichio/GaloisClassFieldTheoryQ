@@ -1,0 +1,85 @@
+Now we can get in touch with a bit of class field theory.
+
+
+default(logfile,"c:/Users/Public/Downloads/parilog.txt")
+default(log,3)
+
+/* Define the polynomial f. You can try two of them. */
+f=Pol([1,3,-6,-6,4])
+f=Pol([1,0,-14,0,16])
+/* Compute the splitting field and get the defining polynomial K.*/
+K=nfsplitting(f)
+nf=nfinit(K);
+/* Make Galis extension. */
+gal=galoisinit(K);
+
+setofprime=primes(1000)
+for(i=1,10000,print(setofprime[i]," ",#idealprimedec(nf,setofprime[i])));
+
+/*
+Let us decompose a prime integer p (in Z) in the extended field nf:=Q(a).
+One finds the set of primes in Q(a) lying over k, (B1....Bn)
+From one of them , one  manage to make the so-called Frobenus map:
+
+sigma (x) =(equivalent) x^#N[p] mod B[i]
+
+
+This is an automorphism in Q(a). When the Galois group is abelian, it is independent of the choise of B[i]; hence one assumes that the prime p is the label of this. How this automporphism would be?
+
+Let us compute and compare the cases, 
+in which p might be decomposed into different number of prime ideals.
+
+One find this:
+    if #B=8 (i.e. when p splits completely), 
+         the automorphism is the identity (x->x); 
+    else, the automorphis might not the identity.
+
+
+This is the reciprocity law, which is the consequence of the class field theory.
+*/
+
+procmakefrobenius(k)=
+{
+prs=idealprimedec(nf,k);
+for(k=1,#prs, g = idealfrobenius(nf,gal,prs[k]); print(galoispermtopol(gal,g));)
+}
+
+procmakefrobenius(k)=
+{
+prs=idealprimedec(nf,k);
+return(vector(#prs,k, galoispermtopol(gal,idealfrobenius(nf,gal,prs[k]))));
+}
+
+
+for(i=1,100,if(4==#idealprimedec(nf,prime(i)),print(prime(i),":",prime(i)%3,":",prime(i)%11)))
+
+
+for(i=10,10000,if(1==prime(i)%11 & 1==prime(i)%3, print(prime(i),":",procmakefrobenius(prime(i)),prime(i)%4)))
+
+
+for(i=10,1000,if(1==prime(i)%3, print(prime(i),":",procmakefrobenius(prime(i)),prime(i)%5,prime(i)%25)))
+
+
+L=List();
+for(i=10,100,p=prime(i);v=[p,p%3,p%11,p%8,Set(procmakefrobenius(p))];print(v);listput(L,v))
+
+/*
+Let us conduct a numerical experiment. We compute the frobenius map of primes p in a certain range.
+And we assign to each prime p a list of numbers. We collect the label and the corresponding Frobeniu 
+map in a list. Then we remove the duplication and sort the list to extract the classes.
+*/
+
+L=List();
+for(i=10,10000,p=prime(i);v=[p%3,p%11,p%8,Set(procmakefrobenius(p))];print(v);listput(L,v));
+A=Set(L);
+#A
+#[p|p<-A,p[4]==[x]]
+#[p|p<-A,p[4]==[-x]]
+#[p|p<-A,p[4]==[ 1/4*x^3 - 7/2*x]]
+#[p|p<-A,p[4]==[-1/4*x^3 + 7/2*x]]
+
+/*
+As the result, we get 80 classes of primes. One quater of them, therefore, contains 20 classes, and each of the four quaters  maps itself exactly into a unique element of the Galois group C2*C2. This is the colloboration of the reciplocal raw, wherein we shall perceive the meaning of modulus.
+*/
+
+

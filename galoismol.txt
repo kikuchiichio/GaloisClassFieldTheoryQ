@@ -1,0 +1,197 @@
+default(logfile,"c:/Users/Public/Downloads/parilog.txt")
+default(log,3)
+print("Define the polynomial f")
+f=Pol([1,3,-6,-6,4])
+print("Compute the splitting field and get the defining polynomial K")
+K=nfsplitting(f)
+print("Make Galis extension")
+gal=galoisinit(K)
+print("Get subgroups of the Galois groip")
+subs=galoissubgroups(gal)
+print("Compute properties of the subgroups")
+v=vector(#subs,i,galoisfixedfield(gal,subs[i],2))
+v2=vector(#subs,i,galoisexport(subs[i]))
+v3=vector(#subs,i,galoisidentify(subs[i]	))
+
+print("Work in the splitting field")
+nf=nfinit(subst(K,x,y))
+print("Get subfields")
+nfs=nfsubfields(subst(K,x,y))
+print("Factor f in the subfields")
+v4=vector(#subs,i, nffactor(nfs[i][1],f))
+
+K4=vector(#subs,i, nffactor(nfs[i][1],K))
+
+v5=vector(#v4,i,v4[i][,1])
+
+print(v)
+
+print("Get automorphism on the splitting field")
+autos=nfgaloisconj(nf)
+
+print("compute the composition of the automorphisms")
+vij=vector(#autos,i, vector(#aotos,j,nfgaloisapply(nf,autos[i],autos[j])))
+
+print("compute the basis")
+nfbasis(K)
+
+print("Give the automorphism with respect to the basis")
+w=vector(#autos,i,nfalgtobasis(nf,autos[i]))
+
+print("To see the automorphism upon factorized polynomials")
+print("Say, v5[10][1..4]")
+
+for(i=1,4,print(v5[10][i]))
+
+c1=lift(v5[10][1]-x)
+print(vector(#autos,i,x+Mod(subst(c1,y,autos[i]),nf.pol)))
+
+
+nfsfield=vector(#nfs, i,nfinit(nfs[i][1]))
+print("Conjugation between v5[5] : factorized polymomials in 5th subfield")
+print(v5[5][1])
+print(v5[5][2])
+print("Define the subfield, Indexed at 5th")
+autos5=nfgaloisconj(nfsfield[5])
+
+print("compare the subfields and the fixed fields")
+print(nfs[1][1]);print(v[1][1])
+print(nfs[2][1]);print(v[2][1])
+print(nfs[3][1]);print(v[3][1])
+print(nfs[4][1]);print(v[4][1])
+print(nfs[5][1]);print(v[5][1])
+print(nfs[6][1]);print(v[6][1])
+print(nfs[7][1]);print(v[7][1])
+print(nfs[8][1]);print(v[8][1])
+print(nfs[9][1]);print(v[9][1])
+print(nfs[10][1]);print(v[10][1])
+
+print("How to extract information about the subfields and subgroups")
+print("This is the factorization of the defining polynomial K")
+print(v[10][3])
+print("The 5-th subgroup is given by the permutation of the roots; namely, the permiuation of the facored linear polinomials in the factorization.")
+print(v2[5])
+
+/*Galois Group on the solution of the initially given polynomial*/
+
+e1234=v4[10][,1]
+e1=lift(e1234[1]-x)
+e2=lift(e1234[2]-x)
+e3=lift(e1234[3]-x)
+e4=lift(e1234[4]-x)
+
+
+
+opr=(Mod(subst(e1,y,-lift(K4[10][,1][6]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e2,y,-lift(K4[10][,1][6]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e3,y,-lift(K4[10][,1][6]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e4,y,-lift(K4[10][,1][6]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+
+opr=(Mod(subst(e1,y,-lift(K4[10][,1][7]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e2,y,-lift(K4[10][,1][7]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e3,y,-lift(K4[10][,1][7]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e4,y,-lift(K4[10][,1][7]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+
+opr=(Mod(subst(e1,y,-lift(K4[10][,1][2]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e2,y,-lift(K4[10][,1][2]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e3,y,-lift(K4[10][,1][2]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e4,y,-lift(K4[10][,1][2]-x)),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+
+l=8;
+procautocalonf(l)=
+{
+e1234=v4[10][,1]
+e1=lift(e1234[1]-x)
+e2=lift(e1234[2]-x)
+e3=lift(e1234[3]-x)
+e4=lift(e1234[4]-x)
+print("aut",l);
+opr=(Mod(subst(e1,y,autos[l]),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e2,y,autos[l]),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e3,y,autos[l]),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+opr=(Mod(subst(e4,y,autos[l]),subst(K,x,y)));
+print(opr==e1,opr==e2,opr==e3,opr==e4);
+}
+
+
+procautocalonf(l)=
+{
+e1234=v4[10][,1]
+e1=lift(e1234[1]-x)
+e2=lift(e1234[2]-x)
+e3=lift(e1234[3]-x)
+e4=lift(e1234[4]-x)
+print("aut",l);
+ev=[e1,e2,e3,e4];
+lt=vector(#K4[10][,1],i,lift(K4[10][,1][i]-x));
+for(j=1,4,opr=(Mod(subst(ev[j],y,lt[l]),subst(K,x,y)));print(vector(4,i,opr==ev[i])););
+}
+
+
+l=8;
+procautocal2(l)=
+{
+lt=vector(#K4[10][,1],i,lift(K4[10][,1][i]-x));
+/*print(lt);*/
+print("aut",l);
+for(j=1,8,opr=(Mod(subst(lt[j],y,autos[l]),subst(K,x,y)));print(vector(8,i,opr==lt[i])););
+}
+
+default(logfile,"c:/Users/Public/Downloads/autolog2.txt")
+
+procautocal2(1);
+procautocal2(2);
+procautocal2(3);
+procautocal2(4);
+procautocal2(5);
+procautocal2(6);
+procautocal2(7);
+procautocal2(8);
+
+procautocal3(l)=
+{
+lt=vector(#K4[10][,1],i,lift(K4[10][,1][i]-x));
+/*print(lt);*/
+print("subst",l);
+for(j=1,8,opr=(Mod(subst(lt[j],y,lt[l]),subst(K,x,y)));print(vector(8,i,opr==lt[i])););
+}
+procautocal3(1);
+procautocal3(2);
+procautocal3(3);
+procautocal3(4);
+procautocal3(5);
+procautocal3(6);
+procautocal3(7);
+procautocal3(8);
+
+procautocalB(l)=
+{
+print("",l);
+ev=[e1,e2,e3,e4];
+lt=vector(#K4[10][,1],i,lift(K4[10][,1][i]-x));
+for(j=1,4,opr=(Mod(subst(ev[j],y,lt[l]),subst(K,x,y)));print(vector(4,i,opr==ev[i])););
+}
+
+procautocalB(1);
+procautocalB(2);
+procautocalB(3);
+procautocalB(4);
+procautocalB(5);
+procautocalB(6);
+procautocalB(7);
+procautocalB(8);
